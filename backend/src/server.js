@@ -1,0 +1,101 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+
+const authRoutes = require('./routes/auth');
+const projetsRoutes = require('./routes/projets');
+const chiffragesRoutes = require('./routes/chiffrages');
+const bonsCommandeRoutes = require('./routes/bonsCommande');
+const tiersRoutes = require('./routes/tiers');
+const contratsSousTraitanceRoutes = require('./routes/contratsSousTraitance');
+const depensesRoutes = require('./routes/depenses');
+const dashboardRoutes = require('./routes/dashboard');
+const demandesAchatRoutes = require('./routes/demandesAchat');
+const bonsLivraisonRoutes = require('./routes/bonsLivraison');
+const entrepriseRoutes = require('./routes/entreprise');
+const appelsOffreRoutes = require('./routes/appelsOffre');
+const tresorerieRoutes = require('./routes/tresorerie');
+const planningRoutes = require('./routes/planning');
+const contratsRoutes = require('./routes/contrats');
+const attachementsRoutes = require('./routes/attachements');
+const decomptesRoutes = require('./routes/decomptes');
+const facturesVenteRoutes = require('./routes/facturesVente');
+const decomptesSousTraitantRoutes = require('./routes/decomptesSousTraitant');
+const facturesSousTraitantRoutes = require('./routes/facturesSousTraitant');
+const controleBudgetaireRoutes = require('./routes/controleBudgetaire');
+const bilanChantierRoutes = require('./routes/bilanChantier');
+const validationsMateriauxRoutes = require('./routes/validationsMateriaux');
+const fonctionsRoutes = require('./routes/fonctions');
+const personnelRoutes = require('./routes/personnel');
+const pointagesRoutes = require('./routes/pointages');
+const comptabiliteParametrageRoutes = require('./routes/comptabiliteParametrage');
+const ecrituresRoutes = require('./routes/ecritures');
+const rapportsComptablesRoutes = require('./routes/rapportsComptables');
+const documentsProjetRoutes = require('./routes/documentsProjet');
+const consultationsSousTraitanceRoutes = require('./routes/consultationsSousTraitance');
+const utilisateursRoutes = require('./routes/utilisateurs');
+const referentielsRoutes = require('./routes/referentiels');
+const stockRoutes = require('./routes/stock');
+const importationsRoutes = require('./routes/importations');
+const budgetsRefRoutes = require('./routes/budgetsRef');
+const paiementsRoutes = require('./routes/paiements');
+const permissionsRoutes = require('./routes/permissions');
+const plateformeRoutes = require('./routes/plateforme');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static(require('path').join(__dirname, '../uploads')));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/projets', projetsRoutes);
+app.use('/api/chiffrages', chiffragesRoutes);
+app.use('/api/bons-commande', bonsCommandeRoutes);
+app.use('/api/tiers', tiersRoutes);
+app.use('/api/contrats-sous-traitance', contratsSousTraitanceRoutes);
+app.use('/api/depenses', depensesRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/demandes-achat', demandesAchatRoutes);
+app.use('/api/bons-livraison', bonsLivraisonRoutes);
+app.use('/api/entreprise', entrepriseRoutes);
+app.use('/api/appels-offre', appelsOffreRoutes);
+app.use('/api/tresorerie', tresorerieRoutes);
+app.use('/api/planning', planningRoutes);
+app.use('/api/contrats', contratsRoutes);
+app.use('/api/attachements', attachementsRoutes);
+app.use('/api/decomptes', decomptesRoutes);
+app.use('/api/factures-vente', facturesVenteRoutes);
+app.use('/api/decomptes-sous-traitant', decomptesSousTraitantRoutes);
+app.use('/api/factures-sous-traitant', facturesSousTraitantRoutes);
+app.use('/api/controle-budgetaire', controleBudgetaireRoutes);
+app.use('/api/bilan-chantier', bilanChantierRoutes);
+app.use('/api/validations-materiaux', validationsMateriauxRoutes);
+app.use('/api/fonctions', fonctionsRoutes);
+app.use('/api/personnel', personnelRoutes);
+app.use('/api/pointages', pointagesRoutes);
+app.use('/api/comptabilite', comptabiliteParametrageRoutes);
+app.use('/api/ecritures', ecrituresRoutes);
+app.use('/api/rapports-comptables', rapportsComptablesRoutes);
+app.use('/api/documents-projet', documentsProjetRoutes);
+app.use('/api/consultations-sous-traitance', consultationsSousTraitanceRoutes);
+app.use('/api/utilisateurs', utilisateursRoutes);
+app.use('/api/referentiels', referentielsRoutes);
+app.use('/api/stock', stockRoutes);
+app.use('/api/importations', importationsRoutes);
+app.use('/api/budgets-ref', budgetsRefRoutes);
+app.use('/api/paiements', paiementsRoutes);
+app.use('/api/permissions', permissionsRoutes);
+app.use('/api/plateforme', plateformeRoutes);
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Erreur serveur interne' });
+});
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`API demarree sur http://localhost:${PORT}`));
+
+// Sauvegardes automatiques quotidiennes de toutes les bases (centrale + chaque entreprise)
+require('./backup').demarrerPlanificateur();
